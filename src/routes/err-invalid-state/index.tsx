@@ -20,8 +20,8 @@ declare module "@builder.io/qwik-city/middleware/cloudflare-pages" {
 }
 
 interface ListItem {
-  todoID: number;
-  todoText: string;
+  id: number;
+  text: string;
 }
 
 export const useListLoader = routeLoader$(
@@ -33,10 +33,11 @@ export const useListLoader = routeLoader$(
 
       const list = results ?? [];
 
-      return list.map((it) => {
-        return { todoID: it.todoID, todoText: it.todoText };
+      return list.map((item) => {
+        return { id: item.id, text: item.text };
       });
     }
+    return [];
   }
 );
 
@@ -44,18 +45,21 @@ export const useAddToListAction = routeAction$(
   async (item, ev: RequestEventAction<PlatformCloudflarePages>) => {
     if (ev.platform.DB) {
       const { success } = await ev.platform.DB.prepare(
-        "INSERT INTO Todos (todoText) VALUES (?)"
+        "INSERT INTO Todos (text) VALUES (?)"
       )
-        .bind(item.todoText)
+        .bind(item.text)
         .all();
 
       return {
         success,
       };
     }
+    return {
+      success: false,
+    };
   },
   zod$({
-    todoText: z.string(),
+    text: z.string(),
   })
 );
 
@@ -75,8 +79,8 @@ export default component$(() => {
         <div class="container center mh-300">
           {(list.value?.length && (
             <ul class={styles.list}>
-              {list.value.map((item) => (
-                <li key={`items-${item.todoID}`}>{item.todoText}</li>
+              {list.value.map((item, index) => (
+                <li key={`items-${index}`}>{item.text}</li>
               ))}
             </ul>
           )) || <span class="no-content">No items found</span>}
@@ -86,7 +90,7 @@ export default component$(() => {
       <div class="section">
         <div class="container center">
           <Form action={action} spaReset>
-            <input type="text" name="todoText" required />{" "}
+            <input type="text" name="text" required />{" "}
             <button type="submit">Add item</button>
           </Form>
 

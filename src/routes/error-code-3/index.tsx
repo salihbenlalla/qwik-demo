@@ -19,7 +19,6 @@ declare module "@builder.io/qwik-city/middleware/cloudflare-pages" {
   }
 }
 
-// add an id for the list item
 interface ListItem {
   id: number;
   text: string;
