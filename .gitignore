@@ -3,6 +3,7 @@
 /lib
 /lib-types
 /server
+tmp
 
 # Development
 node_modules
@@ -36,3 +37,8 @@ lerna-debug.log*
 # Yarn
 .yarn/*
 !.yarn/releases
+
+# Cloudflare
+functions/**/*.js
+wrangler.toml
+.wrangler
